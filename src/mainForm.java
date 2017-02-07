@@ -22,14 +22,18 @@ public class mainForm {
     private JButton Login;
     private JButton JOININButton;
     private JLabel ID;
-
     public mainForm() {
         Login.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
                 contentForm contentForm = new contentForm();
+            }
+        });
+        JOININButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                joinForm f = new joinForm();
             }
         });
     }
@@ -164,6 +168,7 @@ public class mainForm {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         content.add(Login, gbc);
         JOININButton = new JButton();
+        JOININButton.setActionCommand("joinBtn");
         JOININButton.setBackground(new Color(-1));
         JOININButton.setText("JOIN IN?");
         gbc = new GridBagConstraints();

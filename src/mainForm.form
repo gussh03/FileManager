@@ -146,6 +146,7 @@
                   <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <actionCommand value="joinBtn"/>
                   <background color="-1"/>
                   <text value="JOIN IN?"/>
                 </properties>
