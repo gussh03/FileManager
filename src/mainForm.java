@@ -16,13 +16,20 @@ public class mainForm {
     private JPanel contentLabel;
     private JLabel name;
     private JPanel content;
-    ;
     private JTextField textField1;
     private JPasswordField passwordField1;
     private JButton Login;
     private JButton JOININButton;
     private JLabel ID;
+
     public mainForm() {
+        JOININButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                joinForm join = new joinForm();
+            }
+        });
+
         Login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -30,13 +37,8 @@ public class mainForm {
                 contentForm contentForm = new contentForm();
             }
         });
-        JOININButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                joinForm f = new joinForm();
-            }
-        });
     }
+
 
     public static void main(String[] args) {
         frame = new JFrame("File Manager");
@@ -46,7 +48,6 @@ public class mainForm {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
-
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }
