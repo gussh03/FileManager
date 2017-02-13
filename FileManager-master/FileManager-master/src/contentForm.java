@@ -32,7 +32,7 @@ public class contentForm {
     Object[][] rowData;
     Vector vec;
 
-    public contentForm() {
+    public contentForm(ConnectServer cs, String userName) {
         frame = new JFrame("File Manager");
         frame.setContentPane(mainContent);
         frame.setSize(800, 400);
@@ -40,6 +40,7 @@ public class contentForm {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         vec = new Vector();
+        nameLabel.setText(userName);
 
         makeFolderBtn.addActionListener(new ActionListener() {
             @Override

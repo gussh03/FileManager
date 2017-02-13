@@ -23,9 +23,11 @@ public class mainForm {
     private JLabel ID;
 
     public mainForm() {
+        ConnectServer cs = new ConnectServer();
         JOININButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 joinForm join = new joinForm();
             }
         });
@@ -33,8 +35,14 @@ public class mainForm {
         Login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-                contentForm contentForm = new contentForm();
+                String ID = textField1.getText();
+                String PW = passwordField1.getText();
+                cs.Login(ID, PW);
+                String temp = cs.getData();
+                if (temp != null) {
+                    frame.dispose();
+                    contentForm contentForm = new contentForm(cs, temp);
+                }
             }
         });
     }
