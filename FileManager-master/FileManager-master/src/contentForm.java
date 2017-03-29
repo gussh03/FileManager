@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,7 +16,6 @@ public class contentForm {
     private JButton LOGOUTbtn;
     private JPanel namePanel;
     private JLabel nameLabel;
-    private JLabel welcomeMsg;
     private JPanel content;
     private JPanel sideMenu;
     private JButton makeFolderBtn;
@@ -24,34 +25,91 @@ public class contentForm {
     private JButton deleteBtn;
     private JPanel btn;
     private JPanel mainC;
+    private JLabel userInfo;
+    private JList list1;
+    private JLabel filepath;
 
     private JTable mainTable;
     private JScrollPane scroll;
     private JOptionPane input;
     private DefaultTableModel dtm;
-    Object[][] rowData;
-    Vector vec;
+    Vector vec = new Vector();
+    Vector fileContent = new Vector();
+    FileDialog fileDialog;
+    String directory = null;
+    String file = null;
+    int num = 0;
+    ConnectServer connectServer;
+    int fileSize;
+    public contentForm() {
+    }
 
-    public contentForm(ConnectServer cs, String userName) {
+    public contentForm(ConnectServer connectServer, String userName, Vector vec) {
+
+        String user = userName;
+        this.connectServer = connectServer;
         frame = new JFrame("File Manager");
         frame.setContentPane(mainContent);
         frame.setSize(800, 400);
         frame.setLocation(300, 200);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setResizable(false);
         frame.setVisible(true);
-        vec = new Vector();
-        nameLabel.setText(userName);
-
+        userInfo.setText(userName + " ");
+        this.vec = vec;
+        for (int i = 0; i < vec.size(); i++) {
+            list.setListData(vec);
+            list.setSelectedIndex(0);
+        }
+        addBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fileDialog = new FileDialog(frame, "파일 열기", fileDialog.LOAD);
+                fileDialog.setDirectory("");
+                fileDialog.setVisible(true);
+                directory = fileDialog.getDirectory();
+                file = fileDialog.getFile();
+                fileContent.addElement(file);
+                list1.setListData(fileContent);
+                String str = (String) vec.elementAt(num);
+                //connectServer.sendData("E," + str + "," + user + "," + file + ",");
+                connectServer.fileSend(directory, file);
+            }
+        });
         makeFolderBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mainTable = new JTable();
                 String folderName = JOptionPane.showInputDialog(null, "폴더이름을 입력해 주세요");
-                vec.addElement(folderName);
-                list.setListData(vec);
-                list.setSelectedIndex(0);
+                String str = "D," + folderName + ",";
+                connectServer.sendData(str);
+                String result = connectServer.getData();
+                String[] li = result.split(",");
+                if (li[0].equals("F")) {
+                    vec.addElement(folderName);
+                    list.setListData(vec);
+                    list.setSelectedIndex(0);
+                } else if (li[0].equals("T")) {
+                    JOptionPane.showMessageDialog(null, "폴더이름이 중복됩니다.", "Warning", JOptionPane.ERROR_MESSAGE);
+                }
+                System.out.println(li[0]);
+                System.out.println("폴더 만들기");
+
+
             }
         });
+
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                num = list.getSelectedIndex();
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        new contentForm();
     }
 
     {
@@ -86,18 +144,18 @@ public class contentForm {
         namePanel = new JPanel();
         namePanel.setLayout(new BorderLayout(0, 0));
         namePanel.setBackground(new Color(-79671));
-        namePanel.setPreferredSize(new Dimension(150, 0));
+        namePanel.setPreferredSize(new Dimension(300, 0));
         top.add(namePanel, BorderLayout.WEST);
-        nameLabel = new JLabel();
-        nameLabel.setFont(new Font("Monospaced", Font.BOLD, 16));
-        nameLabel.setForeground(new Color(-12300455));
-        nameLabel.setPreferredSize(new Dimension(80, 16));
-        nameLabel.setText(" 이현영");
-        namePanel.add(nameLabel, BorderLayout.WEST);
-        welcomeMsg = new JLabel();
-        welcomeMsg.setForeground(new Color(-12300455));
-        welcomeMsg.setText("님 반갑습니다");
-        namePanel.add(welcomeMsg, BorderLayout.CENTER);
+        final JLabel label1 = new JLabel();
+        label1.setFont(new Font("Monospaced", Font.PLAIN, 10));
+        label1.setForeground(new Color(-12300455));
+        label1.setPreferredSize(new Dimension(100, 16));
+        label1.setText(" 님 반갑습니다");
+        namePanel.add(label1, BorderLayout.EAST);
+        userInfo = new JLabel();
+        userInfo.setPreferredSize(new Dimension(200, 16));
+        userInfo.setText("Label");
+        namePanel.add(userInfo, BorderLayout.WEST);
         content = new JPanel();
         content.setLayout(new BorderLayout(0, 0));
         content.setForeground(new Color(-12300455));
@@ -148,7 +206,15 @@ public class contentForm {
         mainC.setLayout(new BorderLayout(0, 0));
         mainC.setOpaque(false);
         center.add(mainC, BorderLayout.CENTER);
-        nameLabel.setLabelFor(scrollPane1);
+        list1 = new JList();
+        list1.setOpaque(false);
+        mainC.add(list1, BorderLayout.CENTER);
+        filepath = new JLabel();
+        filepath.setFont(new Font("Andale Mono", Font.BOLD, 20));
+        filepath.setForeground(new Color(-12300455));
+        filepath.setText("Filename");
+        mainC.add(filepath, BorderLayout.NORTH);
+        label1.setLabelFor(scrollPane1);
     }
 
     /**

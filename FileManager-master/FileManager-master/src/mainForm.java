@@ -1,8 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
+import java.util.*;
 
 /**
  * Created by hyeon-yeong on 2017. 1. 26..
@@ -21,27 +20,32 @@ public class mainForm {
     private JButton Login;
     private JButton JOININButton;
     private JLabel ID;
-
+    Vector vec = null;
     public mainForm() {
-        ConnectServer cs = new ConnectServer();
+        ConnectServer connectServer = new ConnectServer();
         JOININButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                joinForm join = new joinForm();
+                joinForm join = new joinForm(connectServer);
             }
         });
 
         Login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String li[];
                 String ID = textField1.getText();
-                String PW = passwordField1.getText();
-                cs.Login(ID, PW);
-                String temp = cs.getData();
-                if (temp != null) {
+                String PW = new String(passwordField1.getPassword());
+                connectServer.Login(ID, PW);
+                String temp = connectServer.getData1();
+                li = temp.split(","); //temp 는 사용자 계정 만들때 생성한 폴더 이름
+                if (!(li[0].equals("F"))) {
                     frame.dispose();
-                    contentForm contentForm = new contentForm(cs, temp);
+                    vec = connectServer.getVecData();
+                    contentForm contentForm = new contentForm(connectServer, temp, vec);
+                } else {
+                    JOptionPane.showMessageDialog(null, "ID와 PWD를 정확히 입력해주세요", "Warning", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -54,8 +58,10 @@ public class mainForm {
         frame.setLocation(300, 200);
         frame.setContentPane(new mainForm().mainFrame);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setResizable(false);
         frame.setVisible(true);
     }
+
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }

@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by hyeon-yeong on 2017. 2. 7..
@@ -21,12 +23,45 @@ public class joinForm {
     private JButton JOINButton;
     private static JFrame frame;
 
-    public joinForm() {
+    public joinForm(ConnectServer cs) {
+
         frame = new JFrame("Join In");
         frame.setContentPane(mainPanel);
         frame.setSize(400, 400);
         frame.setLocation(300, 200);
         frame.setVisible(true);
+        checkButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String ls[];
+                String ID1 = "B," + ID.getText() + ",";
+                cs.sendData(ID1);
+                String temp = cs.getData();
+                ls = temp.split(",");
+                if (ls[0].equals("T")) {
+                    JOptionPane.showMessageDialog(null, "ID를 사용하실수 있습니다", "OK", JOptionPane.PLAIN_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "ID가 이미 사용중입니다.", "Warning", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        JOINButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String id = ID.getText();
+                String pw = new String(pwd.getPassword());
+                String pw2 = new String(pwdCheck.getPassword());
+                String fiName = fileName.getText();
+                if (pw.equals(pw2)) {
+                    cs.joinData(id, pw, pw2, fiName);
+                    frame.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "패스워드 2개가 일치하지 않습니다.", "Warning", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+        });
     }
 
 
